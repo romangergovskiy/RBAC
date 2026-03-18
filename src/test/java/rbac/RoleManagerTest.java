@@ -4,6 +4,12 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import rbac.filters.RoleFilters;
+import rbac.manager.RoleManager;
+import rbac.model.Permission;
+import rbac.model.Role;
+import rbac.sort.RoleSorters;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class RoleManagerTest {

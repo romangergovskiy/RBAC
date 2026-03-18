@@ -1,5 +1,12 @@
 package rbac;
 
+import rbac.model.AssignmentMetadata;
+import rbac.model.PermanentAssignment;
+import rbac.model.Role;
+import rbac.model.TemporaryAssignment;
+import rbac.model.User;
+import rbac.model.Permission;
+
 public class Main {
     public static void main(String[] args) {
         assertOkUser("john_doe", "John Doe", "john@example.com");

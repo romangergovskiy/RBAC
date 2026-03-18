@@ -4,6 +4,11 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import rbac.filters.UserFilters;
+import rbac.manager.UserManager;
+import rbac.model.User;
+import rbac.sort.UserSorters;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserManagerTest {

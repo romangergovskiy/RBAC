@@ -1,4 +1,4 @@
-package rbac;
+package rbac.model;
 
 import java.util.Collections;
 import java.util.HashSet;

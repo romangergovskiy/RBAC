@@ -1,4 +1,4 @@
-package rbac;
+package rbac.model;
 
 public class PermanentAssignment extends AbstractRoleAssignment {
     private boolean revoked;

@@ -1,4 +1,4 @@
-package rbac;
+package rbac.model;
 
 public class TemporaryAssignment extends AbstractRoleAssignment {
     private String expiresAt;

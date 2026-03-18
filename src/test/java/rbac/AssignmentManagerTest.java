@@ -5,6 +5,14 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Set;
 
+import rbac.manager.AssignmentManager;
+import rbac.model.AssignmentMetadata;
+import rbac.model.PermanentAssignment;
+import rbac.model.Role;
+import rbac.model.TemporaryAssignment;
+import rbac.model.User;
+import rbac.model.Permission;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class AssignmentManagerTest {

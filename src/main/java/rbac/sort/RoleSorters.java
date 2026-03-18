@@ -1,6 +1,8 @@
-package rbac;
+package rbac.sort;
 
 import java.util.Comparator;
+
+import rbac.model.Role;
 
 public final class RoleSorters {
     private RoleSorters() {

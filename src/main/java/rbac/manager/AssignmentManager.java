@@ -1,4 +1,4 @@
-package rbac;
+package rbac.manager;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -9,6 +9,15 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+
+import rbac.filters.AssignmentFilter;
+import rbac.filters.AssignmentFilters;
+import rbac.model.Permission;
+import rbac.model.PermanentAssignment;
+import rbac.model.Role;
+import rbac.model.RoleAssignment;
+import rbac.model.TemporaryAssignment;
+import rbac.model.User;
 
 public class AssignmentManager implements Repository<RoleAssignment> {
     private final Map<String, RoleAssignment> assignments = new HashMap<>();

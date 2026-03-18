@@ -1,4 +1,4 @@
-package rbac;
+package rbac.model;
 
 import java.util.regex.Pattern;
 
@@ -19,7 +19,6 @@ public record User(String username, String fullName, String email) {
     }
 
     public static User create(String username, String fullName, String email) {
-        // В record конструктора уже есть валидация.
         return new User(username, fullName, email);
     }
 

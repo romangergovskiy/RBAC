@@ -1,4 +1,4 @@
-package rbac;
+package rbac.manager;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+
+import rbac.filters.UserFilter;
+import rbac.model.User;
 
 public class UserManager implements Repository<User> {
     private final Map<String, User> users = new HashMap<>();
