@@ -3,11 +3,13 @@ package rbac;
 import rbac.manager.AssignmentManager;
 import rbac.manager.RoleManager;
 import rbac.manager.UserManager;
+import rbac.util.AuditLog;
 
 public class RBACSystem {
     private final UserManager userManager = new UserManager();
     private final RoleManager roleManager = new RoleManager();
     private final AssignmentManager assignmentManager = new AssignmentManager();
+    private final AuditLog auditLog = new AuditLog();
     private String currentUser;
 
     public UserManager getUserManager() {
@@ -28,6 +30,15 @@ public class RBACSystem {
 
     public String getCurrentUser() {
         return currentUser;
+    }
+
+    public AuditLog getAuditLog() {
+        return auditLog;
+    }
+
+    public void log(String action, String target, String details) {
+        String performer = currentUser != null ? currentUser : "system";
+        auditLog.log(action, performer, target, details);
     }
 
     public void initialize() {
