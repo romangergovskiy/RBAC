@@ -1,6 +1,8 @@
-package rbac;
+package rbac.sort;
 
 import java.util.Comparator;
+
+import rbac.model.RoleAssignment;
 
 public final class AssignmentSorters {
     private AssignmentSorters() {

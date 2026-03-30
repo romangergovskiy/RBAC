@@ -1,4 +1,4 @@
-package rbac;
+package rbac.model;
 
 public interface RoleAssignment {
     String assignmentId();
@@ -11,6 +11,6 @@ public interface RoleAssignment {
 
     boolean isActive();
 
-    String assignmentType(); // "PERMANENT" или "TEMPORARY"
+    String assignmentType();
 }
 

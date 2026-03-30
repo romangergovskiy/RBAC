@@ -1,6 +1,8 @@
-package rbac;
+package rbac.sort;
 
 import java.util.Comparator;
+
+import rbac.model.User;
 
 public final class UserSorters {
     private UserSorters() {

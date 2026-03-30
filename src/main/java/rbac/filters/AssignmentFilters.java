@@ -1,8 +1,10 @@
-package rbac;
+package rbac.filters;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
+import rbac.model.AssignmentMetadata;
+import rbac.model.Role;
+import rbac.model.RoleAssignment;
+import rbac.model.TemporaryAssignment;
+import rbac.model.User;
 
 public final class AssignmentFilters {
     private AssignmentFilters() {
@@ -57,15 +59,6 @@ public final class AssignmentFilters {
             String expiresAt = ta.getExpiresAt();
             return expiresAt.compareTo(threshold) < 0;
         };
-    }
-
-    private static LocalDate parseDate(String s) {
-        if (s == null || s.isBlank()) return null;
-        try {
-            return LocalDate.parse(s.substring(0, 10), DateTimeFormatter.ISO_LOCAL_DATE);
-        } catch (DateTimeParseException e) {
-            return null;
-        }
     }
 }
 

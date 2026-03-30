@@ -1,4 +1,7 @@
-package rbac;
+package rbac.model;
+
+import rbac.util.DateUtils;
+import rbac.util.ValidationUtils;
 
 public class TemporaryAssignment extends AbstractRoleAssignment {
     private String expiresAt;
@@ -6,10 +9,11 @@ public class TemporaryAssignment extends AbstractRoleAssignment {
 
     public TemporaryAssignment(User user, Role role, AssignmentMetadata metadata, String expiresAt, boolean autoRenew) {
         super(user, role, metadata);
-        if (expiresAt == null || expiresAt.isBlank()) {
-            throw new IllegalArgumentException("expiresAt must be non-empty");
+        ValidationUtils.requireNonEmpty(expiresAt, "expiresAt");
+        if (!ValidationUtils.isValidDate(expiresAt.trim())) {
+            throw new IllegalArgumentException("expiresAt must be YYYY-MM-DD or YYYY-MM-DD HH:mm");
         }
-        this.expiresAt = expiresAt;
+        this.expiresAt = ValidationUtils.normalizeString(expiresAt);
         this.autoRenew = autoRenew;
     }
 
@@ -35,18 +39,13 @@ public class TemporaryAssignment extends AbstractRoleAssignment {
     }
 
     public boolean isExpired() {
-        return expiresAt.compareTo(java.time.LocalDate.now().toString()) < 0;
+        String today = DateUtils.getCurrentDate();
+        String exp = expiresAt.length() >= 10 ? expiresAt.substring(0, 10) : expiresAt;
+        return DateUtils.isBefore(exp, today);
     }
 
     public String getTimeRemaining() {
-        try {
-            java.time.LocalDate exp = java.time.LocalDate.parse(expiresAt.substring(0, 10));
-            java.time.LocalDate now = java.time.LocalDate.now();
-            long days = java.time.temporal.ChronoUnit.DAYS.between(now, exp);
-            return days + " day(s) remaining";
-        } catch (Exception e) {
-            return "unknown remaining time";
-        }
+        return DateUtils.formatRelativeTime(expiresAt);
     }
 }
 
