@@ -81,6 +81,11 @@ public class RoleManager implements Repository<Role> {
         return result;
     }
 
+    public List<Role> findByFilterParallel(RoleFilter filter) {
+        List<Role> snapshot = new ArrayList<>(rolesById.values());
+        return snapshot.parallelStream().filter(filter::test).toList();
+    }
+
     public List<Role> findAll(RoleFilter filter, Comparator<Role> sorter) {
         List<Role> result = findByFilter(filter);
         result.sort(sorter);
