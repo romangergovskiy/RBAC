@@ -5,6 +5,12 @@ import rbac.manager.RoleManager;
 import rbac.manager.UserManager;
 import rbac.util.AuditLog;
 import rbac.util.BackgroundExecutor;
+import rbac.util.DateUtils;
+import java.time.LocalDate;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 
 public class RBACSystem {
     private final UserManager userManager = new UserManager();
@@ -13,7 +19,20 @@ public class RBACSystem {
     private final AuditLog auditLog = new AuditLog();
     private final BackgroundExecutor backgroundExecutor =
         new BackgroundExecutor("rbac-worker", Math.max(2, Runtime.getRuntime().availableProcessors() / 2));
+    private final ScheduledExecutorService scheduler;
     private String currentUser;
+
+    public RBACSystem() {
+        ThreadFactory tf = new ThreadFactory() {
+            @Override
+            public Thread newThread(Runnable r) {
+                Thread t = new Thread(r, "rbac-scheduler");
+                t.setDaemon(true);
+                return t;
+            }
+        };
+        this.scheduler = Executors.newSingleThreadScheduledExecutor(tf);
+    }
 
     public UserManager getUserManager() {
         return userManager;
@@ -50,12 +69,37 @@ public class RBACSystem {
 
     public void shutdown() {
         try {
+            try {
+                scheduler.shutdownNow();
+            } catch (Exception ignored) {}
             backgroundExecutor.shutdown();
         } finally {
             try {
                 auditLog.shutdown();
             } catch (Exception ignored) {}
         }
+    }
+
+    public void startMaintenance(int intervalSeconds) {
+        int n = Math.max(1, intervalSeconds);
+        scheduler.scheduleAtFixedRate(() -> {
+            try {
+                var expired = assignmentManager.getExpiredAssignments();
+                if (!expired.isEmpty()) {
+                    String yesterday = LocalDate.now().minusDays(1).toString();
+                    for (var a : expired) {
+                        if (a instanceof rbac.model.TemporaryAssignment ta) {
+                            ta.extend(yesterday);
+                        }
+                    }
+                    log("EXPIRED_ASSIGNMENTS", "-", "expired=" + expired.size() + ", date=" + DateUtils.getCurrentDate());
+                }
+
+                String stats = generateStatistics().replace("\n", " | ").trim();
+                log("STATS_TICK", "-", stats);
+            } catch (Exception ignored) {
+            }
+        }, n, n, TimeUnit.SECONDS);
     }
 
     public void initialize() {
@@ -99,6 +143,9 @@ public class RBACSystem {
         assignmentManager.add(assignment);
 
         currentUser = "admin";
+
+        // default maintenance tick
+        startMaintenance(5);
     }
 
     public String generateStatistics() {
