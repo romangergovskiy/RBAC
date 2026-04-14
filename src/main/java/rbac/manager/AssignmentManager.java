@@ -133,7 +133,13 @@ public class AssignmentManager implements Repository<RoleAssignment> {
     }
 
     public List<RoleAssignment> findByFilterParallel(AssignmentFilter filter) {
-        List<RoleAssignment> snapshot = new ArrayList<>(assignments.values());
+        List<RoleAssignment> snapshot;
+        lock.readLock().lock();
+        try {
+            snapshot = new ArrayList<>(assignments.values());
+        } finally {
+            lock.readLock().unlock();
+        }
         return snapshot.parallelStream().filter(filter::test).toList();
     }
 

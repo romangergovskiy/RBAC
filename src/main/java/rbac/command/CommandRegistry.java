@@ -71,6 +71,27 @@ public final class CommandRegistry {
             }
         });
 
+        parser.registerCommand("report-users-async", "Generate user report in background", (sc, sys) -> {
+            String path = ConsoleUtils.promptString(sc, "Save to file path: ", true);
+            System.out.println("Queued user report generation...");
+            sys.getBackgroundExecutor().submit(() -> {
+                try {
+                    String r = ReportGenerator.generateUserReport(sys.getUserManager(), sys.getAssignmentManager());
+                    ReportGenerator.exportToFile(r, path);
+                    synchronized (System.out) {
+                        System.out.println("\n[async] User report saved to: " + path);
+                        System.out.print("> ");
+                    }
+                    sys.log("REPORT_USERS_ASYNC", path, "saved");
+                } catch (Exception e) {
+                    synchronized (System.out) {
+                        System.out.println("\n[async] User report failed: " + e.getMessage());
+                        System.out.print("> ");
+                    }
+                }
+            });
+        });
+
         parser.registerCommand("report-roles", "Role report", (sc, sys) -> {
             String r = ReportGenerator.generateRoleReport(sys.getRoleManager(), sys.getAssignmentManager());
             System.out.println(r);
@@ -515,6 +536,26 @@ public final class CommandRegistry {
             } catch (Exception e) {
                 System.out.println("Error: " + e.getMessage());
             }
+        });
+
+        parser.registerCommand("save-async", "Save data to file in background", (sc, sys) -> {
+            String path = ConsoleUtils.promptString(sc, "File path: ", true);
+            System.out.println("Queued save...");
+            sys.getBackgroundExecutor().submit(() -> {
+                try {
+                    DataStorage.save(sys, path);
+                    sys.log("SAVE_ASYNC", path, "data saved");
+                    synchronized (System.out) {
+                        System.out.println("\n[async] Saved to: " + path);
+                        System.out.print("> ");
+                    }
+                } catch (Exception e) {
+                    synchronized (System.out) {
+                        System.out.println("\n[async] Save failed: " + e.getMessage());
+                        System.out.print("> ");
+                    }
+                }
+            });
         });
 
         parser.registerCommand("load", "Load data from file", (sc, sys) -> {

@@ -125,7 +125,13 @@ public class UserManager implements Repository<User> {
     }
 
     public List<User> findByFilterParallel(UserFilter filter) {
-        List<User> snapshot = new ArrayList<>(users.values());
+        List<User> snapshot;
+        lock.readLock().lock();
+        try {
+            snapshot = new ArrayList<>(users.values());
+        } finally {
+            lock.readLock().unlock();
+        }
         return snapshot.parallelStream().filter(filter::test).toList();
     }
 

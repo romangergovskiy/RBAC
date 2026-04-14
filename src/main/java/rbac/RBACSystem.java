@@ -4,12 +4,15 @@ import rbac.manager.AssignmentManager;
 import rbac.manager.RoleManager;
 import rbac.manager.UserManager;
 import rbac.util.AuditLog;
+import rbac.util.BackgroundExecutor;
 
 public class RBACSystem {
     private final UserManager userManager = new UserManager();
     private final RoleManager roleManager = new RoleManager();
     private final AssignmentManager assignmentManager = new AssignmentManager();
     private final AuditLog auditLog = new AuditLog();
+    private final BackgroundExecutor backgroundExecutor =
+        new BackgroundExecutor("rbac-worker", Math.max(2, Runtime.getRuntime().availableProcessors() / 2));
     private String currentUser;
 
     public UserManager getUserManager() {
@@ -36,9 +39,23 @@ public class RBACSystem {
         return auditLog;
     }
 
+    public BackgroundExecutor getBackgroundExecutor() {
+        return backgroundExecutor;
+    }
+
     public void log(String action, String target, String details) {
         String performer = currentUser != null ? currentUser : "system";
         auditLog.log(action, performer, target, details);
+    }
+
+    public void shutdown() {
+        try {
+            backgroundExecutor.shutdown();
+        } finally {
+            try {
+                auditLog.shutdown();
+            } catch (Exception ignored) {}
+        }
     }
 
     public void initialize() {

@@ -22,6 +22,8 @@ public class Main {
                 String line = scanner.nextLine();
                 parser.parseAndExecute(line, scanner, system);
             }
+        } finally {
+            system.shutdown();
         }
     }
 }
