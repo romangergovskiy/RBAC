@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class Role {
@@ -24,7 +25,7 @@ public class Role {
         this.id = "role_" + COUNTER.incrementAndGet();
         this.name = name;
         this.description = description;
-        this.permissions = new HashSet<>();
+        this.permissions = ConcurrentHashMap.newKeySet();
     }
 
     public Role(String id, String name, String description, Set<Permission> permissions) {
@@ -40,7 +41,8 @@ public class Role {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.permissions = new HashSet<>(permissions == null ? Collections.emptySet() : permissions);
+        this.permissions = ConcurrentHashMap.newKeySet();
+        this.permissions.addAll(permissions == null ? Collections.emptySet() : permissions);
     }
 
     public String getId() {
