@@ -1,3 +1,7 @@
 /.m2_local/
 /target/
 
+# IDE
+/.idea/
+*.iml
+
