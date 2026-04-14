@@ -43,4 +43,8 @@ public class AuditLog {
         }
         Files.writeString(Path.of(filename), sb.toString());
     }
+
+    public void shutdown() {
+        // no-op (kept for API symmetry with async implementation)
+    }
 }
