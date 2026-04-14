@@ -124,6 +124,11 @@ public class UserManager implements Repository<User> {
         return result;
     }
 
+    public List<User> findByFilterParallel(UserFilter filter) {
+        List<User> snapshot = new ArrayList<>(users.values());
+        return snapshot.parallelStream().filter(filter::test).toList();
+    }
+
     public List<User> findAll(UserFilter filter, Comparator<User> sorter) {
         List<User> result = findByFilter(filter);
         result.sort(sorter);
